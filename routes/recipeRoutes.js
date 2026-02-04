@@ -45,6 +45,22 @@ router.post("/", auth, upload.single("media"), async (req, res) => {
 
 /* OTHER ROUTES */
 router.get("/", getAllRecipes);
+
+router.post("/byIds", async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    const recipes = await Recipe.find({
+      _id: { $in: ids }
+    }).populate("user");
+
+    res.json(recipes);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to load favorites" });
+  }
+});
+
+
 router.get("/:id", getRecipeById);
 router.put("/:id/rate", auth, rateRecipe);
 router.post("/:id/comment", auth, commentRecipe);
